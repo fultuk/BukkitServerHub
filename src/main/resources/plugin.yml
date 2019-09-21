@@ -1,0 +1,12 @@
+name: Hub
+version: ${project.version}
+api-version: "1.13"
+depend: [CloudNet-Bridge]
+author: Panamo
+main: de.panamo.server.hub.ServerHub
+
+commands:
+  setup:
+    description: "Helps setting up the hub"
+    usage: "§c/setup <addlocation, removelocation> <name, e.g 'spawn', 'jumpandrun'>"
+    permission: "hub.command.setup"
