@@ -2,8 +2,10 @@ package de.panamo.server.hub.inventory;
 
 import de.panamo.server.hub.inventory.item.HubItem;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -25,53 +27,45 @@ public class HubInventory implements Listener {
         this.size = size;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void handleDamage(EntityDamageByEntityEvent event) {
         var entity = event.getDamager();
         var target = event.getEntity();
 
-        if (entity instanceof Player && target instanceof Player) {
-            if (this.interactItem((Player) entity, (Player) target, Action.LEFT_CLICK_BLOCK)) {
-                event.setCancelled(true);
-            }
+        if (entity instanceof Player && this.interactItem((Player) entity, target, Action.LEFT_CLICK_BLOCK)) {
+            event.setCancelled(true);
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH)
     public void handleInteract(PlayerInteractEvent event) {
-        this.interactItem(event.getPlayer(), null, event.getAction());
-    }
-
-    @EventHandler
-    public void handleInteract(PlayerInteractEntityEvent event) {
-        var target = event.getRightClicked();
-
-        if (target instanceof Player) {
-            this.interactItem(event.getPlayer(), (Player) target, Action.RIGHT_CLICK_BLOCK);
+        if (this.interactItem(event.getPlayer(), null, event.getAction())) {
+            event.setCancelled(true);
         }
     }
 
-    private boolean interactItem(Player player, Player target, Action action) {
+    @EventHandler(priority = EventPriority.HIGH)
+    public void handleInteract(PlayerInteractEntityEvent event) {
+        if (this.interactItem(event.getPlayer(), event.getRightClicked(), Action.RIGHT_CLICK_BLOCK)) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean interactItem(Player player, Entity target, Action action) {
         var itemInHand = player.getInventory().getItemInMainHand();
 
         for (var hubItem : this.hubItems) {
             if (itemInHand.equals(hubItem.getContent())) {
 
+                HubItem.HubItemAction hubItemAction = new HubItem.HubItemAction(player, target);
+
                 if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-                    if (target != null) {
-                        hubItem.handleLeftClick(player, target);
-                    } else {
-                        hubItem.handleLeftClick(player);
-                    }
+                    hubItem.handleLeftClick(hubItemAction);
                 } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-                    if (target != null) {
-                        hubItem.handleRightClick(player, target);
-                    } else {
-                        hubItem.handleRightClick(player);
-                    }
+                    hubItem.handleRightClick(hubItemAction);
                 }
 
-                return true;
+                return hubItemAction.isCancelled();
             }
         }
 

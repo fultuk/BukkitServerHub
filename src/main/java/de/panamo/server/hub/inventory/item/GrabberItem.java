@@ -1,7 +1,6 @@
 package de.panamo.server.hub.inventory.item;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class GrabberItem extends HubItem {
@@ -11,16 +10,14 @@ public class GrabberItem extends HubItem {
     }
 
     @Override
-    public void handleRightClick(Player player, Player target) {
-        player.addPassenger(target);
+    public void handleRightClick(HubItemAction hubItemAction) {
+        hubItemAction.getTarget().ifPresent(target -> hubItemAction.getPlayer().addPassenger(target));
     }
 
     @Override
-    public void handleLeftClick(Player player, Player target) {
-        if (player.getPassengers().contains(target)) {
-            player.removePassenger(target);
-            target.setVelocity(player.getVelocity().multiply(3).normalize());
-        }
+    public void handleLeftClick(HubItemAction hubItemAction) {
+        var player = hubItemAction.getPlayer();
+        player.getPassengers().stream().findFirst().ifPresent(player::removePassenger);
     }
 
 }

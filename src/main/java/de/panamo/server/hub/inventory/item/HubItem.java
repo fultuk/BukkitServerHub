@@ -1,8 +1,11 @@
 package de.panamo.server.hub.inventory.item;
 
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.Optional;
 
 public class HubItem {
 
@@ -14,21 +17,15 @@ public class HubItem {
         this.slot = slot;
     }
 
-    public void handleLeftClick(Player player, Player target) {
-        this.handleLeftClick(player);
-    }
-
-    public void handleLeftClick(Player player) {
+    public void handleLeftClick(HubItemAction hubItemAction) {
 
     }
 
-    public void handleRightClick(Player player, Player target) {
-        this.handleRightClick(player);
-    }
 
-    public void handleRightClick(Player player) {
+    public void handleRightClick(HubItemAction hubItemAction) {
 
     }
+
 
     public ItemStack getContent() {
         return this.content;
@@ -40,6 +37,37 @@ public class HubItem {
 
     public Material getType() {
         return this.content.getType();
+    }
+
+
+    public static class HubItemAction {
+
+        private Player player;
+        private Entity target;
+
+        private boolean cancelled = false;
+
+        public HubItemAction(Player player, Entity target) {
+            this.player = player;
+            this.target = target;
+        }
+
+        public Player getPlayer() {
+            return player;
+        }
+
+        public Optional<Entity> getTarget() {
+            return Optional.ofNullable(this.target);
+        }
+
+        public boolean isCancelled() {
+            return cancelled;
+        }
+
+        public void setCancelled(boolean cancelled) {
+            this.cancelled = cancelled;
+        }
+
     }
 
 }
