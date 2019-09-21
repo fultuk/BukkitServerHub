@@ -56,6 +56,9 @@ public class JumpAndRun {
         this.nextBlockLocation.getBlock().setType(this.nextBlockMaterial);
     }
 
+    /**
+     * Markes this JumpAndRun as failed and removes the blocks
+     */
     public void failed() {
         this.active = false;
 
@@ -63,7 +66,12 @@ public class JumpAndRun {
         this.nextBlockLocation.getBlock().setType(Material.AIR);
     }
 
-
+    /**
+     * Finds an empty start block for the jumpAndRun within the given range
+     *
+     * @param entryLocation the location the player is on when starting the jumpAndRun
+     * @return the location of the start block
+     */
     private Location findStartBlock(Location entryLocation) {
         var x = RANDOM.nextInt(-JUMP_AND_RUN_RANGE, JUMP_AND_RUN_RANGE + 1);
         var z = RANDOM.nextInt(-JUMP_AND_RUN_RANGE, JUMP_AND_RUN_RANGE + 1);
@@ -77,9 +85,16 @@ public class JumpAndRun {
         return startLocation;
     }
 
+    /**
+     * Finds an empty next block for the jumpAndRun within the given range
+     *
+     * @return the location of the next block
+     */
     private Location findNextBlock() {
+        var y = RANDOM.nextInt(1);
+
         //TODO: find good block in range of the jump and run
-        return this.currentBlockLocation.clone().add(3, 1, 2);
+        return this.currentBlockLocation.clone().add(3, y, 2);
     }
 
 

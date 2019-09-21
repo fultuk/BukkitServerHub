@@ -7,6 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class HubPlayer {
     private static final Map<UUID, HubPlayer> HUB_PLAYERS = new ConcurrentHashMap<>();
+
     private UUID uuid;
     private JumpAndRun jumpAndRun = new JumpAndRun();
 

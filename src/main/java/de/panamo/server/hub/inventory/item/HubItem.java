@@ -7,6 +7,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
 
+/**
+ * Represents an item which will be placed in an {@link de.panamo.server.hub.inventory.HubInventory}
+ */
 public class HubItem {
 
     private ItemStack content;

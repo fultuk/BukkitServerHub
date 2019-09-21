@@ -16,6 +16,9 @@ import org.bukkit.inventory.Inventory;
 import java.util.Collection;
 import java.util.HashSet;
 
+/**
+ * Represents an Inventory which is filled with interactable {@link HubItem}s
+ */
 public class HubInventory implements Listener {
 
     private Collection<HubItem> hubItems = new HashSet<>();
@@ -32,13 +35,14 @@ public class HubInventory implements Listener {
         var entity = event.getDamager();
         var target = event.getEntity();
 
-        if (entity instanceof Player && this.interactItem((Player) entity, target, Action.LEFT_CLICK_BLOCK)) {
-            event.setCancelled(true);
+        if (entity instanceof Player) {
+            event.setCancelled(this.interactItem((Player) entity, target, Action.LEFT_CLICK_BLOCK) || event.isCancelled());
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void handleInteract(PlayerInteractEvent event) {
+        // not using the shorter form because there are two things that might be cancelled
         if (this.interactItem(event.getPlayer(), null, event.getAction())) {
             event.setCancelled(true);
         }
@@ -46,11 +50,17 @@ public class HubInventory implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void handleInteract(PlayerInteractEntityEvent event) {
-        if (this.interactItem(event.getPlayer(), event.getRightClicked(), Action.RIGHT_CLICK_BLOCK)) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(this.interactItem(event.getPlayer(), event.getRightClicked(), Action.RIGHT_CLICK_BLOCK) || event.isCancelled());
     }
 
+    /**
+     * Calls the action-handler of the hubItem used, if one is used
+     *
+     * @param player the player who uses the hubItem
+     * @param target the entity who has been clicked on
+     * @param action the action of the item-use
+     * @return if the action and it's event should be cancelled
+     */
     private boolean interactItem(Player player, Entity target, Action action) {
         var itemInHand = player.getInventory().getItemInMainHand();
 
@@ -76,10 +86,21 @@ public class HubInventory implements Listener {
         this.hubItems.add(hubItem);
     }
 
+    /**
+     * Creates a new inventory and fills it with the hubItems
+     *
+     * @return the new inventory
+     */
     public Inventory toInventory() {
         return this.toInventory(Bukkit.createInventory(null, this.size, this.title));
     }
 
+    /**
+     * Fills an existing inventory with the hubItems
+     *
+     * @param toFill the inventory to clear and fill
+     * @return the given inventory
+     */
     public Inventory toInventory(Inventory toFill) {
         toFill.clear();
 

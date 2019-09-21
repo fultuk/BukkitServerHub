@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Holds all locations used in this plugin and manages the saving/loading
+ */
 public class LocationConfig {
 
     private static final String LOCATIONS_KEY = "locations";
