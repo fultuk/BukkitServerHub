@@ -16,12 +16,7 @@ public class HubPlayer {
     }
 
     public static HubPlayer get(UUID uuid) {
-        if (HUB_PLAYERS.containsKey(uuid)) {
-            return HUB_PLAYERS.get(uuid);
-        }
-        var hubPlayer = new HubPlayer(uuid);
-        HUB_PLAYERS.put(uuid, hubPlayer);
-        return hubPlayer;
+        return HUB_PLAYERS.computeIfAbsent(uuid, HubPlayer::new);
     }
 
     public static boolean exists(UUID uuid) {
