@@ -1,8 +1,7 @@
-package de.panamo.server.hub.commands;
+package de.panamo.server.hub.setup;
 
 
-import de.panamo.server.hub.util.HubMessage;
-import de.panamo.server.hub.util.LocationConfig;
+import de.panamo.server.hub.message.HubMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

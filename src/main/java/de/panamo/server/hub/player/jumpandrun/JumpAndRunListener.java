@@ -1,24 +1,27 @@
-package de.panamo.server.hub.listeners;
+package de.panamo.server.hub.player.jumpandrun;
 
 
-import de.panamo.server.hub.player.HubPlayer;
-import de.panamo.server.hub.util.LocationConfig;
+import de.panamo.server.hub.player.HubPlayerRepository;
+import de.panamo.server.hub.setup.LocationConfig;
 import org.bukkit.Sound;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class JumpAndRunListener implements Listener {
 
     /**
-     * The distance a player can have to the jumpAndRun-blocks before the {@link de.panamo.server.hub.player.JumpAndRun} is marked as failed
+     * The distance a player can have to the jumpAndRun-blocks before the {@link JumpAndRun} is marked as failed
      */
     private static final int FAILURE_DISTANCE = 7;
     private static final String JUMP_AND_RUN_LOCATION_KEY = "jumpandrun";
 
+    private HubPlayerRepository hubPlayerRepository;
     private LocationConfig locationConfig;
 
-    public JumpAndRunListener(LocationConfig locationConfig) {
+    public JumpAndRunListener(HubPlayerRepository hubPlayerRepository, LocationConfig locationConfig) {
+        this.hubPlayerRepository = hubPlayerRepository;
         this.locationConfig = locationConfig;
     }
 
@@ -27,7 +30,7 @@ public class JumpAndRunListener implements Listener {
         var player = event.getPlayer();
         var playerLocation = player.getLocation().toBlockLocation();
 
-        var jumpAndRun = HubPlayer.get(player.getUniqueId()).getJumpAndRun();
+        var jumpAndRun = this.hubPlayerRepository.get(player.getUniqueId()).getJumpAndRun();
 
         if (jumpAndRun.isActive()) {
 
@@ -55,6 +58,16 @@ public class JumpAndRunListener implements Listener {
                     player.playSound(startLocation, Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
                 }
             });
+        }
+    }
+
+    @EventHandler
+    public void handleQuit(PlayerQuitEvent event) {
+        var player = event.getPlayer();
+        var jumpAndRun = this.hubPlayerRepository.get(player.getUniqueId()).getJumpAndRun();
+
+        if (jumpAndRun.isActive()) {
+            jumpAndRun.failed();
         }
     }
 

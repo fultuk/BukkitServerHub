@@ -1,4 +1,4 @@
-package de.panamo.server.hub.util;
+package de.panamo.server.hub.message;
 
 
 public enum HubMessage {

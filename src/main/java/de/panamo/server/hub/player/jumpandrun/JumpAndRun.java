@@ -1,4 +1,4 @@
-package de.panamo.server.hub.player;
+package de.panamo.server.hub.player.jumpandrun;
 
 
 import com.destroystokyo.paper.MaterialTags;
@@ -13,14 +13,13 @@ public class JumpAndRun {
 
     private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
-    private static final List<Material> TERRACOTTA_MATERIALS =
-            new ArrayList<>(MaterialTags.TERRACOTTA.not(Material.TERRACOTTA).notEndsWith("GLAZED_TERRACOTTA").getValues());
+    private static final List<Material> TERRACOTTA_MATERIALS
+            = new ArrayList<>(MaterialTags.TERRACOTTA.not(Material.TERRACOTTA).notEndsWith("GLAZED_TERRACOTTA").getValues());
     private static final List<Material> GLASS_MATERIALS
             = new ArrayList<>(MaterialTags.STAINED_GLASS.getValues());
 
     private static final int JUMP_AND_RUN_RANGE = 20;
     private static final int JUMP_AND_RUN_HEIGHT = 15;
-
 
     private boolean active;
     private Location currentBlockLocation;
@@ -29,7 +28,7 @@ public class JumpAndRun {
     private Material reachedBlockMaterial;
     private Material nextBlockMaterial;
 
-    public void start(Location entryLocation) {
+    void start(Location entryLocation) {
         this.active = true;
 
         var materialIndex = RANDOM.nextInt(TERRACOTTA_MATERIALS.size() - 1);
@@ -43,7 +42,7 @@ public class JumpAndRun {
         this.nextBlockLocation.getBlock().setType(this.nextBlockMaterial);
     }
 
-    public void nextBlockReached() {
+    void nextBlockReached() {
         var lastBlockLocation = this.currentBlockLocation;
         var newCurrentBlockLocation = this.nextBlockLocation;
 
@@ -59,7 +58,7 @@ public class JumpAndRun {
     /**
      * Markes this JumpAndRun as failed and removes the blocks
      */
-    public void failed() {
+    void failed() {
         this.active = false;
 
         this.currentBlockLocation.getBlock().setType(Material.AIR);
@@ -98,15 +97,15 @@ public class JumpAndRun {
     }
 
 
-    public boolean isActive() {
+    boolean isActive() {
         return active;
     }
 
-    public Location getCurrentBlockLocation() {
+    Location getCurrentBlockLocation() {
         return currentBlockLocation;
     }
 
-    public Location getNextBlockLocation() {
+    Location getNextBlockLocation() {
         return nextBlockLocation;
     }
 

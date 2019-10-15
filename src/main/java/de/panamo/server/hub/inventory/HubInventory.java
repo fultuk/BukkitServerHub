@@ -25,6 +25,7 @@ public class HubInventory implements Listener {
     private String title;
     private int size;
 
+
     public HubInventory(String title, int size) {
         this.title = title;
         this.size = size;

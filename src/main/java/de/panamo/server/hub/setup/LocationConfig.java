@@ -1,4 +1,4 @@
-package de.panamo.server.hub.util;
+package de.panamo.server.hub.setup;
 
 
 import org.bukkit.Location;
@@ -24,14 +24,11 @@ public class LocationConfig {
 
     public LocationConfig(File file) {
         this.file = file;
+    }
 
-        try {
-            if (!file.exists() && !file.createNewFile()) {
-                return;
-            }
-        } catch (IOException exception) {
-            exception.printStackTrace();
-            return;
+    public void load() throws IOException {
+        if (!this.file.exists()) {
+            this.file.createNewFile();
         }
 
         this.configuration = YamlConfiguration.loadConfiguration(file);
