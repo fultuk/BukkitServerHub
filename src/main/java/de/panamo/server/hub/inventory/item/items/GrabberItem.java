@@ -1,12 +1,13 @@
-package de.panamo.server.hub.inventory.item;
+package de.panamo.server.hub.inventory.item.items;
 
+import de.panamo.server.hub.inventory.item.HubItem;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class GrabberItem extends HubItem {
 
     public GrabberItem() {
-        super(new ItemStack(Material.SADDLE), 0);
+        super(new ItemStack(Material.SADDLE), 2);
     }
 
     @Override
@@ -17,7 +18,10 @@ public class GrabberItem extends HubItem {
     @Override
     public void handleLeftClick(HubItemAction hubItemAction) {
         var player = hubItemAction.getPlayer();
-        player.getPassengers().stream().findFirst().ifPresent(player::removePassenger);
+        player.getPassengers().stream().findFirst().ifPresent(target -> {
+            player.removePassenger(target);
+            target.setVelocity(player.getLocation().getDirection().normalize().setY(0.7));
+        });
     }
 
 }

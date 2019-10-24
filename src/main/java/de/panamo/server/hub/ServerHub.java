@@ -2,7 +2,8 @@ package de.panamo.server.hub;
 
 
 import de.panamo.server.hub.inventory.HubInventory;
-import de.panamo.server.hub.inventory.item.GrabberItem;
+import de.panamo.server.hub.inventory.item.items.GrabberItem;
+import de.panamo.server.hub.inventory.item.items.KnockbackStickItem;
 import de.panamo.server.hub.player.HubPlayerRepository;
 import de.panamo.server.hub.player.jumpandrun.JumpAndRunListener;
 import de.panamo.server.hub.player.listener.JoinListener;
@@ -34,6 +35,7 @@ public class ServerHub extends JavaPlugin {
 
         HubInventory hubInventory = new HubInventory("Player", 9);
         hubInventory.addHubItem(new GrabberItem());
+        hubInventory.addHubItem(new KnockbackStickItem());
 
         Bukkit.getPluginManager().registerEvents(hubInventory, this);
         Bukkit.getPluginManager().registerEvents(new JoinListener(this.locationConfig, hubInventory), this);

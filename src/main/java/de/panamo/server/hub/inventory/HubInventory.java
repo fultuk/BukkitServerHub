@@ -4,6 +4,7 @@ import de.panamo.server.hub.inventory.item.HubItem;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -25,7 +26,6 @@ public class HubInventory implements Listener {
     private String title;
     private int size;
 
-
     public HubInventory(String title, int size) {
         this.title = title;
         this.size = size;
@@ -33,25 +33,22 @@ public class HubInventory implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void handleDamage(EntityDamageByEntityEvent event) {
-        var entity = event.getDamager();
+        var damager = event.getDamager();
         var target = event.getEntity();
 
-        if (entity instanceof Player) {
-            event.setCancelled(this.interactItem((Player) entity, target, Action.LEFT_CLICK_BLOCK) || event.isCancelled());
+        if (damager instanceof Player) {
+            this.interactItem((Player) damager, target, Action.LEFT_CLICK_BLOCK, event);
         }
     }
 
     @EventHandler(priority = EventPriority.HIGH)
     public void handleInteract(PlayerInteractEvent event) {
-        // not using the shorter form because there are two things that might be cancelled
-        if (this.interactItem(event.getPlayer(), null, event.getAction())) {
-            event.setCancelled(true);
-        }
+        this.interactItem(event.getPlayer(), null, event.getAction(), event);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void handleInteract(PlayerInteractEntityEvent event) {
-        event.setCancelled(this.interactItem(event.getPlayer(), event.getRightClicked(), Action.RIGHT_CLICK_BLOCK) || event.isCancelled());
+    public void handleInteractEntity(PlayerInteractEntityEvent event) {
+        this.interactItem(event.getPlayer(), event.getRightClicked(), Action.RIGHT_CLICK_BLOCK, event);
     }
 
     /**
@@ -60,15 +57,15 @@ public class HubInventory implements Listener {
      * @param player the player who uses the hubItem
      * @param target the entity who has been clicked on
      * @param action the action of the item-use
-     * @return if the action and it's event should be cancelled
+     * @param event the event which showed the action
      */
-    private boolean interactItem(Player player, Entity target, Action action) {
+    private void interactItem(Player player, Entity target, Action action, Cancellable event) {
         var itemInHand = player.getInventory().getItemInMainHand();
 
         for (var hubItem : this.hubItems) {
             if (itemInHand.equals(hubItem.getContent())) {
 
-                HubItem.HubItemAction hubItemAction = new HubItem.HubItemAction(player, target);
+                HubItem.HubItemAction hubItemAction = new HubItem.HubItemAction(player, target, event);
 
                 if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
                     hubItem.handleLeftClick(hubItemAction);
@@ -76,11 +73,8 @@ public class HubInventory implements Listener {
                     hubItem.handleRightClick(hubItemAction);
                 }
 
-                return hubItemAction.isCancelled();
             }
         }
-
-        return false;
     }
 
     public void addHubItem(HubItem hubItem) {

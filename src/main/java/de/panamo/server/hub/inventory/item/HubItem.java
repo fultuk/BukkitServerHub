@@ -3,6 +3,7 @@ package de.panamo.server.hub.inventory.item;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Optional;
@@ -12,8 +13,8 @@ import java.util.Optional;
  */
 public class HubItem {
 
-    private ItemStack content;
-    private int slot;
+    protected ItemStack content;
+    protected int slot;
 
     public HubItem(ItemStack content, int slot) {
         this.content = content;
@@ -47,12 +48,12 @@ public class HubItem {
 
         private Player player;
         private Entity target;
+        private Cancellable event;
 
-        private boolean cancelled = false;
-
-        public HubItemAction(Player player, Entity target) {
+        public HubItemAction(Player player, Entity target, Cancellable event) {
             this.player = player;
             this.target = target;
+            this.event = event;
         }
 
         public Player getPlayer() {
@@ -63,12 +64,8 @@ public class HubItem {
             return Optional.ofNullable(this.target);
         }
 
-        public boolean isCancelled() {
-            return cancelled;
-        }
-
-        public void setCancelled(boolean cancelled) {
-            this.cancelled = cancelled;
+        public Cancellable getEvent() {
+            return event;
         }
 
     }
